@@ -4,6 +4,12 @@ using UnityEngine;
 namespace BottleSystem
 {
     [System.Serializable]
+    public class BottleLayoutData
+    {
+        public string[] colors;
+    }
+
+    [System.Serializable]
     public class LevelData
     {
         public int levelNumber;
@@ -16,11 +22,12 @@ namespace BottleSystem
         public int emptyBottleCount;
         public int moveLimit;
         public string enemyId;
+        public string enemyName;
         public int enemyHP;
         public string enemyWeaknessColor;
         public bool isBossLevel;
         public int rewardCoins;
         public int rewardGems;
-        public List<List<string>> bottleLayouts;
+        public BottleLayoutData[] bottles;
     }
 }

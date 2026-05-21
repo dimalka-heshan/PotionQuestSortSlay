@@ -9,10 +9,17 @@
   "emptyBottleCount": 2,
   "moveLimit": 25,
   "enemyId": "forest_bat_01",
+  "enemyName": "Forest Bat",
   "enemyHP": 300,
   "enemyWeaknessColor": "Green",
   "isBossLevel": false,
   "rewardCoins": 50,
   "rewardGems": 0,
-  "bottleLayouts": [["Green","Red","Blue","Red"],["Red","Blue","Green","Blue"],["Blue","Red","Green","Green"],[],[]]
+  "bottles": [
+    { "colors": ["Green", "Red", "Blue", "Red"] },
+    { "colors": ["Red", "Blue", "Green", "Blue"] },
+    { "colors": ["Blue", "Red", "Green", "Green"] },
+    { "colors": [] },
+    { "colors": [] }
+  ]
 }

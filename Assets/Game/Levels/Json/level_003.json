@@ -9,10 +9,18 @@
   "emptyBottleCount": 2,
   "moveLimit": 30,
   "enemyId": "tiny_goblin_01",
+  "enemyName": "Tiny Goblin",
   "enemyHP": 400,
   "enemyWeaknessColor": "Blue",
   "isBossLevel": false,
   "rewardCoins": 50,
   "rewardGems": 0,
-  "bottleLayouts": [["Blue","Red","Green","Red"],["Red","Blue","Green","Blue"],["Green","Red","Blue","Green"],["Blue","Green","Red","Red"],[],[]]
+  "bottles": [
+    { "colors": ["Blue", "Red", "Green", "Red"] },
+    { "colors": ["Red", "Blue", "Green", "Blue"] },
+    { "colors": ["Green", "Red", "Blue", "Green"] },
+    { "colors": ["Blue", "Green", "Red", "Red"] },
+    { "colors": [] },
+    { "colors": [] }
+  ]
 }

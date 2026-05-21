@@ -58,9 +58,14 @@ namespace BottleSystem
             moveCount = currentLevelData.moveLimit;
             UpdateMovesUI();
 
-            if (enemyNameText != null) enemyNameText.text = currentLevelData.enemyId;
+            if (enemyNameText != null)
+            {
+                enemyNameText.text = !string.IsNullOrEmpty(currentLevelData.enemyName) 
+                    ? currentLevelData.enemyName 
+                    : currentLevelData.enemyId;
+            }
 
-            int requiredBottles = currentLevelData.bottleLayouts.Count;
+            int requiredBottles = currentLevelData.bottles.Length;
             
             // Reuse or Instantiate bottles
             List<BottleController> existingBottles = new List<BottleController>();
@@ -81,7 +86,12 @@ namespace BottleSystem
             for (int i = 0; i < existingBottles.Count; i++) {
                 if (i < requiredBottles) {
                     existingBottles[i].gameObject.SetActive(true);
-                    existingBottles[i].Initialize(i, currentLevelData.bottleCapacity, currentLevelData.bottleLayouts[i]);
+                    
+                    List<string> initialColors = currentLevelData.bottles[i].colors != null 
+                        ? new List<string>(currentLevelData.bottles[i].colors) 
+                        : new List<string>();
+                        
+                    existingBottles[i].Initialize(i, currentLevelData.bottleCapacity, initialColors);
                     bottles.Add(existingBottles[i]);
 
                     Button btn = existingBottles[i].GetComponent<Button>();
@@ -90,12 +100,14 @@ namespace BottleSystem
                         BottleController captured = existingBottles[i];
                         btn.onClick.AddListener(() => OnBottleClicked(captured));
                     }
+                    
+                    Debug.Log($"[GameManager] Bottle {i} Setup: IsEmpty={existingBottles[i].IsEmpty()}, IsFull={existingBottles[i].IsFull()}, Colors={existingBottles[i].DebugColors()}");
                 } else {
                     existingBottles[i].gameObject.SetActive(false);
                 }
             }
             
-            Debug.Log($"[GameManager] Level {currentLevelData.levelNumber} Setup Complete.");
+            Debug.Log($"[GameManager] Level {currentLevelData.levelNumber} Setup Complete. Enemy: {(enemyNameText != null ? enemyNameText.text : "N/A")}");
         }
 
         public void OnBottleClicked(BottleController bottle)

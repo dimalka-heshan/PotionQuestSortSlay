@@ -8,26 +8,65 @@ namespace BottleSystem
     {
         public static bool Validate(LevelData data)
         {
-            if (data == null) return false;
-            if (data.levelNumber <= 0) return false;
-            if (string.IsNullOrEmpty(data.themeId)) return false;
-            if (data.bottleCapacity <= 0) return false;
-            if (data.bottleLayouts == null || data.bottleLayouts.Count == 0) return false;
+            if (data == null)
+            {
+                Debug.LogError("[LevelValidator] LevelData is null.");
+                return false;
+            }
+            if (data.levelNumber <= 0)
+            {
+                Debug.LogError("[LevelValidator] Invalid level number.");
+                return false;
+            }
+            if (string.IsNullOrEmpty(data.themeId))
+            {
+                Debug.LogError("[LevelValidator] themeId is missing.");
+                return false;
+            }
+            if (data.bottleCapacity <= 0)
+            {
+                Debug.LogError("[LevelValidator] bottleCapacity must be > 0.");
+                return false;
+            }
+            if (data.bottles == null || data.bottles.Length == 0)
+            {
+                Debug.LogError("[LevelValidator] No bottles defined in level data.");
+                return false;
+            }
 
             int totalCount = 0;
-            foreach (var layout in data.bottleLayouts)
+            for (int i = 0; i < data.bottles.Length; i++)
             {
-                if (layout.Count > data.bottleCapacity)
+                var bottle = data.bottles[i];
+                if (bottle == null)
                 {
-                    Debug.LogWarning($"Level {data.levelNumber}: Bottle exceeds capacity.");
+                    Debug.LogError($"[LevelValidator] Bottle at index {i} is null.");
                     return false;
                 }
+
+                if (bottle.colors == null)
+                {
+                    Debug.LogWarning($"[LevelValidator] Bottle at index {i} colors array is null. Treating as empty.");
+                    bottle.colors = new string[0];
+                }
+
+                if (bottle.colors.Length > data.bottleCapacity)
+                {
+                    Debug.LogError($"[LevelValidator] Level {data.levelNumber}: Bottle {i} exceeds capacity ({bottle.colors.Length} > {data.bottleCapacity}).");
+                    return false;
+                }
+
+                if (bottle.colors.Length == 0)
+                {
+                    // Ensure empty bottles are truly empty (already handled by Length == 0)
+                }
+
                 totalCount++;
             }
 
             if (totalCount != (data.filledBottleCount + data.emptyBottleCount))
             {
-                Debug.LogWarning($"Level {data.levelNumber}: Total bottle count mismatch.");
+                Debug.LogWarning($"[LevelValidator] Level {data.levelNumber}: Total bottle count mismatch ({totalCount} vs {data.filledBottleCount + data.emptyBottleCount}).");
             }
 
             return true;
@@ -55,6 +94,14 @@ namespace BottleSystem
                 if (LevelValidator.Validate(data))
                 {
                     Debug.Log($"[LevelLoader] Successfully loaded Level {levelNumber}");
+                    Debug.Log($"[LevelLoader] Level: {data.levelNumber}, Enemy: {(!string.IsNullOrEmpty(data.enemyName) ? data.enemyName : data.enemyId)}, Moves: {data.moveLimit}, Bottles: {data.bottles.Length}");
+                    
+                    for (int i = 0; i < data.bottles.Length; i++)
+                    {
+                        string colorsStr = data.bottles[i].colors != null ? string.Join(", ", data.bottles[i].colors) : "EMPTY";
+                        Debug.Log($"[LevelLoader] Bottle {i}: [{colorsStr}]");
+                    }
+
                     return data;
                 }
                 else
@@ -65,7 +112,7 @@ namespace BottleSystem
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"[LevelLoader] Error parsing JSON for Level {levelNumber}: {e.Message}");
+                Debug.LogError($"[LevelLoader] Error parsing JSON for Level {levelNumber}: {e.Message}\n{e.StackTrace}");
                 return null;
             }
         }

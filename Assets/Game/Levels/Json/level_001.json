@@ -9,10 +9,16 @@
   "emptyBottleCount": 2,
   "moveLimit": 20,
   "enemyId": "forest_slime_01",
+  "enemyName": "Forest Slime",
   "enemyHP": 200,
   "enemyWeaknessColor": "Red",
   "isBossLevel": false,
   "rewardCoins": 50,
   "rewardGems": 0,
-  "bottleLayouts": [["Blue","Red","Blue","Red"],["Red","Blue","Red","Blue"],[],[]]
+  "bottles": [
+    { "colors": ["Blue", "Red", "Blue", "Red"] },
+    { "colors": ["Red", "Blue", "Red", "Blue"] },
+    { "colors": [] },
+    { "colors": [] }
+  ]
 }
