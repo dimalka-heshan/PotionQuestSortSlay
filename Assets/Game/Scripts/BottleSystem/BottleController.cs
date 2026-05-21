@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,84 +9,87 @@ namespace BottleSystem
         public int bottleIndex;
         public int capacity = 4;
         
-        // Bottle Convention:
-        // colors[0] = bottom
-        // colors[colors.Count - 1] = top
-        // empty bottle = empty list
         [Header("Data")]
-        [SerializeField] private List<string> colors = new List<string>();
-        
+        public string[] colors = new string[4];
+        public int numberOfColorsInBottle = 0;
+        public string topColor;
+        public int numberOfTopColorLayer = 0;
+
         [Header("Visuals")]
-        [SerializeField] private BottleViewBase bottleView;
+        [SerializeField] private BottleViewUI bottleView;
 
         public void Initialize(int index, int capacity, List<string> initialColors)
         {
             this.bottleIndex = index;
             this.capacity = capacity;
-            this.colors = new List<string>();
+            this.numberOfColorsInBottle = 0;
             
-            if (initialColors != null)
+            for (int i = 0; i < 4; i++)
             {
-                foreach (var c in initialColors)
+                if (initialColors != null && i < initialColors.Count)
                 {
-                    if (!string.IsNullOrEmpty(c) && c != "Empty" && c != "None")
-                    {
-                        this.colors.Add(c);
-                    }
+                    colors[i] = initialColors[i];
+                    numberOfColorsInBottle++;
+                }
+                else
+                {
+                    colors[i] = "None";
                 }
             }
-            
-            if (bottleView == null) bottleView = GetComponentInChildren<BottleViewBase>();
+
+            if (bottleView == null) bottleView = GetComponentInChildren<BottleViewUI>();
+            UpdateTopColorValue();
             RefreshView();
             
-            Debug.Log($"[Bottle {bottleIndex} Init] {DebugColors()} Capacity: {capacity}");
+            Debug.Log($"[Bottle {bottleIndex} Init] {DebugColors()} Count: {numberOfColorsInBottle}");
         }
 
-        public bool IsEmpty() => colors.Count == 0;
-        public bool IsFull() => colors.Count >= capacity;
+        public bool IsEmpty() => numberOfColorsInBottle == 0;
+        public bool IsFull() => numberOfColorsInBottle >= capacity;
 
-        public string GetTopColor()
+        public int UpdateTopColorValue()
         {
-            if (IsEmpty()) return null;
-            return colors[colors.Count - 1]; // Top is last
-        }
+            if (numberOfColorsInBottle == 0)
+            {
+                topColor = "None";
+                numberOfTopColorLayer = 0;
+                return 0;
+            }
 
-        public int GetTopColorGroupCount()
-        {
-            if (IsEmpty()) return 0;
-            string topColor = GetTopColor();
-            int count = 0;
-            for (int i = colors.Count - 1; i >= 0; i--)
+            topColor = colors[numberOfColorsInBottle - 1];
+            numberOfTopColorLayer = 1;
+
+            for (int i = numberOfColorsInBottle - 2; i >= 0; i--)
             {
                 if (colors[i] == topColor)
-                    count++;
+                    numberOfTopColorLayer++;
                 else
                     break;
             }
-            return count;
+
+            return numberOfTopColorLayer;
         }
 
-        public int GetAvailableSpace() => capacity - colors.Count;
-
-        public bool CanPourInto(BottleController target)
+        public string GetTopColor()
         {
-            if (target == null || target == this) return false;
-            if (IsEmpty()) return false; // Source empty
-            if (target.IsFull()) return false; // Target full
-            if (target.IsEmpty()) return true; // Target empty is always valid
-            
-            return target.GetTopColor() == GetTopColor(); // Colors must match
+            if (numberOfColorsInBottle == 0) return null;
+            return colors[numberOfColorsInBottle - 1];
+        }
+
+        public bool FillBottleCheck(string colorToCheck)
+        {
+            if (numberOfColorsInBottle == 0) return true;
+            if (numberOfColorsInBottle == capacity) return false;
+            return topColor == colorToCheck;
         }
 
         public int CalculatePourAmountTo(BottleController target)
         {
-            if (!CanPourInto(target)) return 0;
+            if (target == null || target == this) return 0;
+            if (IsEmpty()) return 0;
+            if (!target.FillBottleCheck(topColor)) return 0;
 
-            int sourceTopCount = GetTopColorGroupCount();
-            int targetSpace = target.GetAvailableSpace();
-            
-            // Pour only what fits and only the connected top group
-            return Mathf.Min(sourceTopCount, targetSpace);
+            return Mathf.Min(numberOfTopColorLayer, target.capacity - target.numberOfColorsInBottle);
         }
 
         public bool PourTo(BottleController target)
@@ -93,69 +97,60 @@ namespace BottleSystem
             int amount = CalculatePourAmountTo(target);
             if (amount <= 0) return false;
 
-            string colorToPour = GetTopColor();
+            string colorToTransfer = topColor;
             for (int i = 0; i < amount; i++)
             {
-                RemoveTopColor();
-                target.AddColor(colorToPour);
+                // Remove from source
+                colors[numberOfColorsInBottle - 1] = "None";
+                numberOfColorsInBottle--;
+                
+                // Add to target
+                target.colors[target.numberOfColorsInBottle] = colorToTransfer;
+                target.numberOfColorsInBottle++;
             }
+
+            UpdateTopColorValue();
+            target.UpdateTopColorValue();
             return true;
-        }
-
-        public string RemoveTopColor()
-        {
-            if (IsEmpty()) return null;
-            int lastIndex = colors.Count - 1;
-            string top = colors[lastIndex];
-            colors.RemoveAt(lastIndex); // Remove last
-            return top;
-        }
-
-        public void AddColor(string colorId)
-        {
-            if (IsFull() || string.IsNullOrEmpty(colorId)) return;
-            colors.Add(colorId); // Append to end
         }
 
         public bool IsCompleted()
         {
-            if (colors.Count == 0) return false;
-            if (colors.Count != capacity) return false;
-            
+            if (numberOfColorsInBottle != capacity) return false;
             string first = colors[0];
-            foreach (var c in colors)
+            if (first == "None") return false;
+            for (int i = 1; i < capacity; i++)
             {
-                if (c != first) return false;
+                if (colors[i] != first) return false;
             }
             return true;
         }
-
-        public string DebugColors()
-        {
-            return "[" + string.Join(", ", colors) + "]";
-        }
-
-        public string GetColorsDebugString() => DebugColors();
 
         public void RefreshView()
         {
             if (bottleView != null)
             {
-                bottleView.RefreshVisuals(colors, capacity);
+                bottleView.RefreshVisuals(new List<string>(colors), capacity);
             }
         }
 
-        // View Proxy Methods
+        public string DebugColors()
+        {
+            List<string> activeColors = new List<string>();
+            for(int i=0; i<numberOfColorsInBottle; i++) activeColors.Add(colors[i]);
+            return "[" + string.Join(", ", activeColors) + "]";
+        }
+
         public void Select() => bottleView?.PlaySelect();
         public void Deselect() => bottleView?.PlayDeselect();
         public void NotifyInvalid() => bottleView?.PlayInvalidMove();
         public void NotifyComplete() => bottleView?.PlayCompleted();
-        
-        public System.Collections.IEnumerator AnimatePourTo(BottleController target, int amount)
+
+        public IEnumerator AnimatePourTo(BottleController target, int amount)
         {
             if (bottleView != null && target.bottleView != null)
             {
-                yield return bottleView.PlayPourTo(target.bottleView, GetTopColor(), amount);
+                yield return bottleView.PlayPourTo(target.bottleView, topColor, amount);
             }
         }
     }

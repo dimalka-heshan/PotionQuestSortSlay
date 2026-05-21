@@ -32,10 +32,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3583081465622618935}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80.87056, y: -61.75669}
-  m_SizeDelta: {x: 161.74112, y: 123.51338}
+  m_AnchorMin: {x: 0, y: 0.75}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3026632032498408873
 CanvasRenderer:
@@ -84,7 +84,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3583081465622618935}
-  - component: {fileID: 8184936914799445633}
   m_Layer: 0
   m_Name: LiquidLayers
   m_TagString: Untagged
@@ -115,32 +114,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &8184936914799445633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3397741588712551131}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 7
-  m_Spacing: 2
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 1
 --- !u!1 &3957713964078919090
 GameObject:
   m_ObjectHideFlags: 0
@@ -241,6 +214,9 @@ MonoBehaviour:
   selectionGlow: {fileID: 9201354708154819362}
   pourStream: {fileID: 2990183133669611957}
   layerImagesAreBottomToTop: 1
+  liftHeight: 40
+  pourRotation: 75
+  animationDuration: 0.35
 --- !u!1 &4014283328584547348
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,10 +324,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3583081465622618935}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80.87056, y: -312.78345}
-  m_SizeDelta: {x: 161.74112, y: 123.51338}
+  m_AnchorMin: {x: 0, y: 0.25}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0.000015258789}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &306796276374133943
 CanvasRenderer:
@@ -529,6 +505,9 @@ MonoBehaviour:
   bottleIndex: 0
   capacity: 4
   colors: []
+  numberOfColorsInBottle: 0
+  topColor: 
+  numberOfTopColorLayer: 0
   bottleView: {fileID: 3806245858069678992}
 --- !u!114 &4604923505252669768
 MonoBehaviour:
@@ -657,10 +636,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3583081465622618935}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80.87056, y: -438.29684}
-  m_SizeDelta: {x: 161.74112, y: 123.51338}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0.25}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &836332457532557202
 CanvasRenderer:
@@ -732,10 +711,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3583081465622618935}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80.87056, y: -187.27008}
-  m_SizeDelta: {x: 161.74112, y: 123.51338}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.75}
+  m_AnchoredPosition: {x: 0, y: -0.0000038146973}
+  m_SizeDelta: {x: 0, y: 0.0000076293945}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3948225624231234185
 CanvasRenderer:

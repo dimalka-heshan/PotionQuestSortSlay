@@ -60,10 +60,9 @@ namespace BottleSystem
 
             if (enemyNameText != null)
             {
-                if (!string.IsNullOrEmpty(currentLevelData.enemyName))
-                    enemyNameText.text = currentLevelData.enemyName;
-                else
-                    enemyNameText.text = currentLevelData.enemyId;
+                enemyNameText.text = !string.IsNullOrEmpty(currentLevelData.enemyName) 
+                    ? currentLevelData.enemyName 
+                    : currentLevelData.enemyId;
             }
 
             int requiredBottles = currentLevelData.bottles.Length;
@@ -100,91 +99,87 @@ namespace BottleSystem
                         BottleController captured = existingBottles[i];
                         btn.onClick.AddListener(() => OnBottleClicked(captured));
                     }
-                    
-                    Debug.Log($"[GameManager] Bottle {i} Setup: IsEmpty={existingBottles[i].IsEmpty()}, IsFull={existingBottles[i].IsFull()}, Colors={existingBottles[i].DebugColors()}");
                 } else {
                     existingBottles[i].gameObject.SetActive(false);
                 }
             }
-
-            Debug.Log($"[GameManager] Level {currentLevelData.levelNumber} Setup Complete. Enemy: {(enemyNameText != null ? enemyNameText.text : "N/A")}");
+            
+            Debug.Log($"[GameManager] Level {currentLevelData.levelNumber} Setup Complete.");
         }
 
-        public void OnBottleClicked(BottleController bottle)
+        public void OnBottleClicked(BottleController clickedBottle)
         {
-            if (isGameOver || isAnimating || bottle == null) return;
+            if (isGameOver || isAnimating || clickedBottle == null) return;
 
             if (selectedBottle == null)
             {
-                if (bottle.IsEmpty()) return;
+                // First Selection
+                if (clickedBottle.IsEmpty()) return;
                 
-                selectedBottle = bottle;
+                selectedBottle = clickedBottle;
                 selectedBottle.Select();
             }
             else
             {
-                if (selectedBottle == bottle)
+                if (selectedBottle == clickedBottle)
                 {
+                    // Deselect
                     selectedBottle.Deselect();
                     selectedBottle = null;
                 }
                 else
                 {
-                    StartCoroutine(HandlePourSequence(selectedBottle, bottle));
-                    selectedBottle = null;
+                    // Second Selection - Attempt Pour
+                    int pourAmount = selectedBottle.CalculatePourAmountTo(clickedBottle);
+                    if (pourAmount > 0)
+                    {
+                        StartCoroutine(HandlePourSequence(selectedBottle, clickedBottle, pourAmount));
+                        selectedBottle = null;
+                    }
+                    else
+                    {
+                        // Invalid move - shake and deselect source
+                        clickedBottle.NotifyInvalid();
+                        selectedBottle.NotifyInvalid();
+                        selectedBottle.Deselect();
+                        selectedBottle = null;
+                    }
                 }
             }
         }
 
-        private IEnumerator HandlePourSequence(BottleController source, BottleController target)
+        private IEnumerator HandlePourSequence(BottleController source, BottleController target, int amount)
         {
             isAnimating = true;
 
-            if (source == null || target == null)
+            string colorName = source.topColor;
+            Debug.Log($"[POUR] {source.bottleIndex} -> {target.bottleIndex} | Color: {colorName}, Amount: {amount}");
+
+            // Visual Animation
+            yield return source.AnimatePourTo(target, amount);
+            
+            // Logic Update
+            source.PourTo(target);
+            
+            // Refresh Visuals
+            source.RefreshView();
+            target.RefreshView();
+
+            moveCount--;
+            UpdateMovesUI();
+
+            if (target.IsCompleted())
             {
-                isAnimating = false;
-                yield break;
+                target.NotifyComplete();
             }
 
-            int pourAmount = source.CalculatePourAmountTo(target);
-            if (pourAmount > 0)
-            {
-                yield return source.AnimatePourTo(target, pourAmount);
-                source.PourTo(target);
-                
-                Debug.Log("[AFTER POUR DATA] Source " + source.bottleIndex + " = " + source.DebugColors());
-                Debug.Log("[AFTER POUR DATA] Target " + target.bottleIndex + " = " + target.DebugColors());
-
-                source.RefreshView();
-                target.RefreshView();
-
-                moveCount--;
-                UpdateMovesUI();
-
-                if (target.IsCompleted())
-                {
-                    target.NotifyComplete();
-                }
-
-                source.Deselect();
-                CheckWinCondition();
-            }
-            else
-            {
-                target.NotifyInvalid();
-                source.NotifyInvalid();
-                source.Deselect();
-            }
-
+            CheckWinCondition();
             isAnimating = false;
         }
 
         private void UpdateMovesUI()
         {
-            if (movesText != null)
-            {
-                movesText.text = $"Moves: {moveCount}";
-            }
+            if (movesText != null) movesText.text = $"Moves: {moveCount}";
         }
 
         private void CheckWinCondition()
