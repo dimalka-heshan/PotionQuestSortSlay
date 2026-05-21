@@ -1,0 +1,18 @@
+{
+  "levelNumber": 3,
+  "worldId": 1,
+  "themeId": "Forest_Normal",
+  "difficultyTier": "Tutorial",
+  "bottleCapacity": 6,
+  "colorCount": 3,
+  "filledBottleCount": 4,
+  "emptyBottleCount": 2,
+  "moveLimit": 30,
+  "enemyId": "tiny_goblin_01",
+  "enemyHP": 400,
+  "enemyWeaknessColor": "Blue",
+  "isBossLevel": false,
+  "rewardCoins": 50,
+  "rewardGems": 0,
+  "bottleLayouts": [["Blue","Red","Green","Red"],["Red","Blue","Green","Blue"],["Green","Red","Blue","Green"],["Blue","Green","Red","Red"],[],[]]
+}

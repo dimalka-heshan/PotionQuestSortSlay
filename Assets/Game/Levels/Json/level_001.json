@@ -1,0 +1,18 @@
+{
+  "levelNumber": 1,
+  "worldId": 2,
+  "themeId": "Forest_Normal",
+  "difficultyTier": "Tutorial",
+  "bottleCapacity": 4,
+  "colorCount": 3,
+  "filledBottleCount": 2,
+  "emptyBottleCount": 2,
+  "moveLimit": 20,
+  "enemyId": "forest_slime_01",
+  "enemyHP": 200,
+  "enemyWeaknessColor": "Red",
+  "isBossLevel": false,
+  "rewardCoins": 50,
+  "rewardGems": 0,
+  "bottleLayouts": [["Blue","Red","Blue","Red"],["Red","Blue","Red","Blue"],[],[]]
+}

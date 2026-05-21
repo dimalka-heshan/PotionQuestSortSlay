@@ -1,0 +1,18 @@
+{
+  "levelNumber": 2,
+  "worldId": 1,
+  "themeId": "Forest_Normal",
+  "difficultyTier": "Tutorial",
+  "bottleCapacity": 5,
+  "colorCount": 3,
+  "filledBottleCount": 3,
+  "emptyBottleCount": 2,
+  "moveLimit": 25,
+  "enemyId": "forest_bat_01",
+  "enemyHP": 300,
+  "enemyWeaknessColor": "Green",
+  "isBossLevel": false,
+  "rewardCoins": 50,
+  "rewardGems": 0,
+  "bottleLayouts": [["Green","Red","Blue","Red"],["Red","Blue","Green","Blue"],["Blue","Red","Green","Green"],[],[]]
+}
