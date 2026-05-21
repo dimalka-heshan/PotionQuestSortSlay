@@ -60,9 +60,10 @@ namespace BottleSystem
 
             if (enemyNameText != null)
             {
-                enemyNameText.text = !string.IsNullOrEmpty(currentLevelData.enemyName) 
-                    ? currentLevelData.enemyName 
-                    : currentLevelData.enemyId;
+                if (!string.IsNullOrEmpty(currentLevelData.enemyName))
+                    enemyNameText.text = currentLevelData.enemyName;
+                else
+                    enemyNameText.text = currentLevelData.enemyId;
             }
 
             int requiredBottles = currentLevelData.bottles.Length;
@@ -151,8 +152,12 @@ namespace BottleSystem
             {
                 yield return source.AnimatePourTo(target, pourAmount);
                 source.PourTo(target);
+                
+                Debug.Log("[After Pour] Source " + source.bottleIndex + ": " + source.DebugColors());
+                Debug.Log("[After Pour] Target " + target.bottleIndex + ": " + target.DebugColors());
+
                 source.RefreshView();
-                target.RefreshView();
+target.RefreshView();
 
                 moveCount--;
                 UpdateMovesUI();

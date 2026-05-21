@@ -11,6 +11,7 @@ namespace BottleSystem
         [SerializeField] private List<Image> layerImages = new List<Image>();
         [SerializeField] private Image selectionGlow;
         [SerializeField] private Image pourStream;
+        [SerializeField] private bool layerImagesAreBottomToTop = false;
         
         private Vector2 originalAnchoredPosition;
         private bool isInitialized = false;
@@ -120,19 +121,28 @@ namespace BottleSystem
 
         public override void RefreshVisuals(List<string> colors, int capacity)
         {
-            // VerticalLayoutGroup handles bottom-to-top if reverseArrangement is true
-            // liquidColors[0] is bottom, layerImages[0] should be bottom
+            Initialize();
+
             for (int i = 0; i < layerImages.Count; i++)
             {
-                if (i < colors.Count)
-                {
-                    layerImages[i].color = StringToColor(colors[i]);
-                    layerImages[i].gameObject.SetActive(true);
-                }
-                else
-                {
-                    layerImages[i].gameObject.SetActive(false);
-                }
+                if (layerImages[i] == null) continue;
+                layerImages[i].color = Color.clear;
+                layerImages[i].gameObject.SetActive(false);
+                layerImages[i].raycastTarget = false;
+            }
+
+            int count = colors != null ? colors.Count : 0;
+
+            for (int i = 0; i < count && i < layerImages.Count; i++)
+            {
+                int visualIndex = layerImagesAreBottomToTop ? i : layerImages.Count - 1 - i;
+
+                Image img = layerImages[visualIndex];
+                if (img == null) continue;
+
+                img.color = StringToColor(colors[i]);
+                img.gameObject.SetActive(true);
+                img.raycastTarget = false;
             }
         }
 
