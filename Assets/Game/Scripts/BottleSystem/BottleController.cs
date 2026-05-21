@@ -8,6 +8,10 @@ namespace BottleSystem
         public int bottleIndex;
         public int capacity = 4;
         
+        // Bottle Convention:
+        // colors[0] = bottom
+        // colors[colors.Count - 1] = top
+        // empty bottle = empty list
         [Header("Data")]
         [SerializeField] private List<string> colors = new List<string>();
         
@@ -43,7 +47,7 @@ namespace BottleSystem
         public string GetTopColor()
         {
             if (IsEmpty()) return null;
-            return colors[colors.Count - 1];
+            return colors[colors.Count - 1]; // Top is last
         }
 
         public int GetTopColorGroupCount()
@@ -66,10 +70,11 @@ namespace BottleSystem
         public bool CanPourInto(BottleController target)
         {
             if (target == null || target == this) return false;
-            if (IsEmpty()) return false;
-            if (target.IsFull()) return false;
-            if (target.IsEmpty()) return true;
-            return target.GetTopColor() == GetTopColor();
+            if (IsEmpty()) return false; // Source empty
+            if (target.IsFull()) return false; // Target full
+            if (target.IsEmpty()) return true; // Target empty is always valid
+            
+            return target.GetTopColor() == GetTopColor(); // Colors must match
         }
 
         public int CalculatePourAmountTo(BottleController target)
@@ -78,6 +83,8 @@ namespace BottleSystem
 
             int sourceTopCount = GetTopColorGroupCount();
             int targetSpace = target.GetAvailableSpace();
+            
+            // Pour only what fits and only the connected top group
             return Mathf.Min(sourceTopCount, targetSpace);
         }
 
@@ -100,14 +107,14 @@ namespace BottleSystem
             if (IsEmpty()) return null;
             int lastIndex = colors.Count - 1;
             string top = colors[lastIndex];
-            colors.RemoveAt(lastIndex);
+            colors.RemoveAt(lastIndex); // Remove last
             return top;
         }
 
         public void AddColor(string colorId)
         {
             if (IsFull() || string.IsNullOrEmpty(colorId)) return;
-            colors.Add(colorId);
+            colors.Add(colorId); // Append to end
         }
 
         public bool IsCompleted()

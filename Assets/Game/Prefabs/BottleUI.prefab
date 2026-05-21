@@ -240,6 +240,7 @@ MonoBehaviour:
   - {fileID: 6556419971140386671}
   selectionGlow: {fileID: 9201354708154819362}
   pourStream: {fileID: 2990183133669611957}
+  layerImagesAreBottomToTop: 1
 --- !u!1 &4014283328584547348
 GameObject:
   m_ObjectHideFlags: 0

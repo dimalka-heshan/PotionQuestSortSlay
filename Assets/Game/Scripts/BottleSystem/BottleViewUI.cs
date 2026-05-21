@@ -123,6 +123,7 @@ namespace BottleSystem
         {
             Initialize();
 
+            // 1. Clear every layer image
             for (int i = 0; i < layerImages.Count; i++)
             {
                 if (layerImages[i] == null) continue;
@@ -133,8 +134,11 @@ namespace BottleSystem
 
             int count = colors != null ? colors.Count : 0;
 
+            // 2. Redraw from current bottle data only
+            // convention: colors[0] = bottom liquid layer
             for (int i = 0; i < count && i < layerImages.Count; i++)
             {
+                // Mapping bottle data to visual layers
                 int visualIndex = layerImagesAreBottomToTop ? i : layerImages.Count - 1 - i;
 
                 Image img = layerImages[visualIndex];
