@@ -13,14 +13,19 @@ namespace BottleSystem
                 Debug.LogError("[LevelValidator] LevelData is null.");
                 return false;
             }
+            if (data.bottles == null)
+            {
+                Debug.LogError("[LevelValidator] bottles array is null.");
+                return false;
+            }
+            if (data.bottles.Length == 0)
+            {
+                Debug.LogError("[LevelValidator] bottles array is empty.");
+                return false;
+            }
             if (data.levelNumber <= 0)
             {
                 Debug.LogError("[LevelValidator] Invalid level number.");
-                return false;
-            }
-            if (string.IsNullOrEmpty(data.themeId))
-            {
-                Debug.LogError("[LevelValidator] themeId is missing.");
                 return false;
             }
             if (data.bottleCapacity <= 0)
@@ -28,26 +33,23 @@ namespace BottleSystem
                 Debug.LogError("[LevelValidator] bottleCapacity must be > 0.");
                 return false;
             }
-            if (data.bottles == null || data.bottles.Length == 0)
-            {
-                Debug.LogError("[LevelValidator] No bottles defined in level data.");
-                return false;
-            }
 
             int totalCount = 0;
             for (int i = 0; i < data.bottles.Length; i++)
             {
                 var bottle = data.bottles[i];
+                // Every BottleLayoutData entry can be null only if treated as empty.
                 if (bottle == null)
                 {
-                    Debug.LogError($"[LevelValidator] Bottle at index {i} is null.");
-                    return false;
+                    totalCount++;
+                    continue;
                 }
 
+                // colors can be null only if treated as empty.
                 if (bottle.colors == null)
                 {
-                    Debug.LogWarning($"[LevelValidator] Bottle at index {i} colors array is null. Treating as empty.");
-                    bottle.colors = new string[0];
+                    totalCount++;
+                    continue;
                 }
 
                 if (bottle.colors.Length > data.bottleCapacity)
@@ -56,14 +58,10 @@ namespace BottleSystem
                     return false;
                 }
 
-                if (bottle.colors.Length == 0)
-                {
-                    // Ensure empty bottles are truly empty (already handled by Length == 0)
-                }
-
                 totalCount++;
             }
 
+            // filledBottleCount + emptyBottleCount should match data.bottles.Length.
             if (totalCount != (data.filledBottleCount + data.emptyBottleCount))
             {
                 Debug.LogWarning($"[LevelValidator] Level {data.levelNumber}: Total bottle count mismatch ({totalCount} vs {data.filledBottleCount + data.emptyBottleCount}).");
@@ -93,13 +91,18 @@ namespace BottleSystem
                 
                 if (LevelValidator.Validate(data))
                 {
-                    Debug.Log($"[LevelLoader] Successfully loaded Level {levelNumber}");
-                    Debug.Log($"[LevelLoader] Level: {data.levelNumber}, Enemy: {(!string.IsNullOrEmpty(data.enemyName) ? data.enemyName : data.enemyId)}, Moves: {data.moveLimit}, Bottles: {data.bottles.Length}");
+                    string enemyLabel = !string.IsNullOrEmpty(data.enemyName) ? data.enemyName : data.enemyId;
+                    Debug.Log($"[LevelLoader] Successfully loaded Level {data.levelNumber}");
+                    Debug.Log($"[LevelLoader] Enemy: {enemyLabel}, Bottles: {data.bottles.Length}");
                     
                     for (int i = 0; i < data.bottles.Length; i++)
                     {
-                        string colorsStr = data.bottles[i].colors != null ? string.Join(", ", data.bottles[i].colors) : "EMPTY";
-                        Debug.Log($"[LevelLoader] Bottle {i}: [{colorsStr}]");
+                        string colorsStr = "EMPTY";
+                        if (data.bottles[i] != null && data.bottles[i].colors != null && data.bottles[i].colors.Length > 0)
+                        {
+                            colorsStr = string.Join(", ", data.bottles[i].colors);
+                        }
+                        Debug.Log($"[LevelLoader] Bottle {i} (Bottom-to-Top): [{colorsStr}]");
                     }
 
                     return data;

@@ -1,10 +1,10 @@
 {
   "levelNumber": 1,
-  "worldId": 2,
+  "worldId": 1,
   "themeId": "Forest_Normal",
   "difficultyTier": "Tutorial",
   "bottleCapacity": 4,
-  "colorCount": 3,
+  "colorCount": 2,
   "filledBottleCount": 2,
   "emptyBottleCount": 2,
   "moveLimit": 20,

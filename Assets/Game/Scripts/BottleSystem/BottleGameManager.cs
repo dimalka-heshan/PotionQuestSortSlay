@@ -88,11 +88,10 @@ namespace BottleSystem
                 if (i < requiredBottles) {
                     existingBottles[i].gameObject.SetActive(true);
                     
-                    List<string> initialColors = currentLevelData.bottles[i].colors != null 
-                        ? new List<string>(currentLevelData.bottles[i].colors) 
-                        : new List<string>();
-                        
-                    existingBottles[i].Initialize(i, currentLevelData.bottleCapacity, initialColors);
+                    string[] rawColors = currentLevelData.bottles[i] != null ? currentLevelData.bottles[i].colors : null;
+                    List<string> colors = rawColors != null ? new List<string>(rawColors) : new List<string>();
+                    existingBottles[i].Initialize(i, currentLevelData.bottleCapacity, colors);
+                    
                     bottles.Add(existingBottles[i]);
 
                     Button btn = existingBottles[i].GetComponent<Button>();
@@ -107,7 +106,7 @@ namespace BottleSystem
                     existingBottles[i].gameObject.SetActive(false);
                 }
             }
-            
+
             Debug.Log($"[GameManager] Level {currentLevelData.levelNumber} Setup Complete. Enemy: {(enemyNameText != null ? enemyNameText.text : "N/A")}");
         }
 
@@ -153,11 +152,11 @@ namespace BottleSystem
                 yield return source.AnimatePourTo(target, pourAmount);
                 source.PourTo(target);
                 
-                Debug.Log("[After Pour] Source " + source.bottleIndex + ": " + source.DebugColors());
-                Debug.Log("[After Pour] Target " + target.bottleIndex + ": " + target.DebugColors());
+                Debug.Log("[AFTER POUR DATA] Source " + source.bottleIndex + " = " + source.DebugColors());
+                Debug.Log("[AFTER POUR DATA] Target " + target.bottleIndex + " = " + target.DebugColors());
 
                 source.RefreshView();
-target.RefreshView();
+                target.RefreshView();
 
                 moveCount--;
                 UpdateMovesUI();

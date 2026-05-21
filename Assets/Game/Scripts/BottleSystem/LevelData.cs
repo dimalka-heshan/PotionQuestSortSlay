@@ -1,14 +1,7 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BottleSystem
 {
-    [System.Serializable]
-    public class BottleLayoutData
-    {
-        public string[] colors;
-    }
-
     [System.Serializable]
     public class LevelData
     {
@@ -29,5 +22,11 @@ namespace BottleSystem
         public int rewardCoins;
         public int rewardGems;
         public BottleLayoutData[] bottles;
+    }
+
+    [System.Serializable]
+    public class BottleLayoutData
+    {
+        public string[] colors;
     }
 }
